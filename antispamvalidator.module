@@ -1,0 +1,55 @@
+<?php
+
+/**
+ * @file
+ * Contains antispamvalidator.module.
+ */
+
+use Drupal\Core\Field\BaseFieldDefinition;
+use Drupal\Core\Routing\RouteMatchInterface;
+use Drupal\Core\Entity\EntityTypeInterface;
+use Drupal\Core\Render\Element;
+use Symfony\Cmf\Component\Routing\RouteObjectInterface;
+
+/**
+ * Implements hook_help().
+ */
+function antispamvalidator_help($route_name, RouteMatchInterface $route_match) {
+  switch ($route_name) {
+    // Main module help for the antispamvalidator module.
+    case 'help.page.antispamvalidator':
+      $output = '';
+      $output .= '<h3>' . t('About') . '</h3>';
+      $output .= '<p>' . t('Creates a form validation that checks username and and prevents account registration if validation does not pass.') . '</p>';
+      return $output;
+
+    default:
+  }
+}
+
+/**
+ * Implements hook_form_alter().
+ */
+function antispamvalidator_form_alter(&$form, \Drupal\Core\Form\FormStateInterface $form_state, $form_id) {
+  if($form_id = "user_register_form"){
+    // Add our validators.
+    $form['#validate'][] = 'antispamvalidator_user_register_validate';
+  }
+}
+
+/**
+ * Validate registration form submissions.
+ */
+function antispamvalidator_user_register_validate(&$form, \Drupal\Core\Form\FormStateInterface $form_state) {
+  $values = $form_state->getValues();
+  // Really simple spam checks.
+  if (isset($values['name'])) {
+    if (preg_match('/(INTINFOGE)/', $values['name'])) {
+      $errors[] = 'intinfoge';
+    }
+  }
+
+  if (!empty($errors)) {
+    $form_state->setErrorByName('form_token', 'You appear to be a spam user and your account has not been created.');
+  }
+}

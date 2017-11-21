@@ -1,0 +1,5 @@
+name: antispamvalidator
+type: module
+description: Creates a validation handler that checks for specific letters in user information and prevents account registration if validation does not pass.
+core: 8.x
+package: Custom
