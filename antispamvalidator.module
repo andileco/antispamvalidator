@@ -42,9 +42,10 @@ function antispamvalidator_form_alter(&$form, \Drupal\Core\Form\FormStateInterfa
  */
 function antispamvalidator_user_register_validate(&$form, \Drupal\Core\Form\FormStateInterface $form_state) {
   $values = $form_state->getValues();
+  drupal_set_message(json_encode($values['name']).'__VALUESNAME');
   // Really simple spam checks.
   if (isset($values['name'])) {
-    if (preg_match('/(INTINFOGE)/', $values['name'])) {
+    if (strpos($values['name'], 'INTINFOGE')) {
       $errors[] = 'intinfoge';
     }
   }
